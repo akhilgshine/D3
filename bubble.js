@@ -1,6 +1,6 @@
 
-var width = 1500;
-var height = 1000;
+var width = 1000;
+var height = 800;
 var maxRecord = 0;
 var minRecord = 0;
 var clusterPadding = 6
@@ -30,8 +30,6 @@ function ready(error, data) {
 
       var forceXSeperate = d3.forceX(function(d) {
         let population = numeral(d['records']).value()
-        alert(population)
-
           if (d.population > 380000) {
               return 600
           } else {
@@ -76,7 +74,7 @@ function ready(error, data) {
           var fillColor = d3.scaleOrdinal()
 
    .domain(['hacked','poor security','oops!'])
-   .range(['#e3b172', '#d27533', '#d07132']);
+   .range(['lightblue', '#b3f0ff', '#d07132']);
           // var colorScale = d3.scaleSequential().domain([0, 1]).interpolator(d3.interpolateViridis);
           var groups = svg.selectAll(".circle_class")
             .data(data)
