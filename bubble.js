@@ -97,9 +97,7 @@ function ready(error, data) {
             .on("click", function (d) {
               console.log(d)
             })
-            .call(d3.zoom().on("zoom", function () {
-       svg.attr("transform", d3.event.transform)
-    }))
+            
     d3.select("#seperate").on('click', function() {
         simulation
             .force("x", forceXSeperate)
