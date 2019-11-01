@@ -1,5 +1,3 @@
-
-
 var width = 1500;
 var height = 1000;
 var maxRecord = 0;
@@ -11,9 +9,10 @@ d3.queue()
   .await(ready)
 
 
-function ready(error, data) {
 
-  console.log(data)
+function ready(error, data) {
+  
+
   var svg = d3.select("#chart")
     .append("svg")
     .attr("height", height)
@@ -22,7 +21,7 @@ function ready(error, data) {
 
   var forceXSeperate = d3.forceX(function (d) {
     let population = numeral(d['records']).value()
-    if (population < 9900000) {
+    if (population < 450000) {
       return 200
     }
     else {
@@ -39,14 +38,21 @@ function ready(error, data) {
     return height / 2
   }).strength(0.05)
 
+
+
   var forceCollide = d3.forceCollide(function (d) {
-    return radiusScale(numeral(d['records']).value()+(Math.random() * 20))
+    return radiusScale(numeral(d['records']).value()) + 20
   })
 
   var simulation = d3.forceSimulation()
+  .velocityDecay(0.2)
     .force("x", forceXcombine)
     .force("y", forceY)
     .force("collide", forceCollide)
+
+
+    // simulation.stop()
+
   let minyear = d3.min(data, function (d) {
     return +d.YEAR;
   });
@@ -65,44 +71,58 @@ function ready(error, data) {
   var yAxis = d3.axisLeft().scale(yScale).ticks(20)
   var radiusScale = d3.scaleLinear().domain([minRecord, maxRecord]).range([20, 150]);
   var colorScale = d3.scaleSequential().domain([0, 1]).interpolator(d3.interpolateViridis);
+  var colorScale = d3.scaleOrdinal().domain(['hacked','poor security','oops!'])
+   .range(['lightblue', '#b3f0ff', '#d07132']);
 
   var groups = svg.selectAll(".circle_class")
     .data(data)
     .enter()
     .append("g")
     .attr("class", "group")
+   //  groups.attr("transform", function(d, i) {
+   //    var x = (i % 3) * 40 + 100;
+   //    var y = 50 * Math.floor(i / 3) + 50 ; // y varies between 100 and 250
+   //
+   // return "translate(" + [x,y] + ")";
+   // });
 
     let circles = groups.append("circle")
     .attr("class", "circle_class")
     .attr("cx", function (d) {
-      return radiusScale(numeral(d['records']).value()) + (Math.random() * 20)
+      return radiusScale(numeral(d['records']).value()+ (Math.random() * 20))
     })
     .attr("cy", function (d) {
-      return radiusScale(numeral(d['records']).value()) + (Math.random() * 20)
+      return radiusScale(numeral(d['records']).value() + (Math.random() * 20))
     })
     .attr("r", function (d) {
-      return radiusScale(numeral(d['records']).value()) + (Math.random() * 20)
+      return radiusScale(numeral(d['records']).value()+ (Math.random() * 20) )
     }).style("fill", function(d){
       return colorScale(Math.random())
     }).on("click", function (d) {
       console.log(d)
     })
+    console.log(groups)
 
-    let texts = groups.append("text")
-    .style('fill', 'black')
-    .style("text-anchor", "middle")
-    .attr('font-size',15)//font size
-    .attr("x", 0)
-    .attr("y", 10)
-    texts.selectAll("tspan.text")
-    .data(d => d.Entity.split(" "))
-    .enter()
-    .append("tspan")
-    .attr("class", "text")
-    .text(d => d)
-    .attr("x", 20)
-    .attr("dx", 10)
-    .attr("dy", 10);
+    // groups.append("text")
+    // .attr("text-anchor", "middle")
+    //  .attr("x", function(d) { return continentKeyScale(d) + keyElementWidth/2; })
+    //  .text(function(d) { return continentNames[d]; });
+
+    // let texts = groups.append("text")
+    // .style('fill', 'black')
+    // .style("text-anchor", "middle")
+    // .attr('font-size',15)//font size
+    // .attr("x", 0)
+    // .attr("y", 10)
+    // texts.selectAll("tspan.text")
+    // .data(d => d.Entity.split(" "))
+    // .enter()
+    // .append("tspan")
+    // .attr("class", "text")
+    // .text(d => d)
+    // .attr("x", 20)
+    // .attr("dx", 10)
+    // .attr("dy", 10);
   d3.select("#seperate").on('click', function () {
     simulation
       .force("x", forceXSeperate)
